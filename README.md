@@ -1,14 +1,19 @@
 ## Clone the Repository
 
-In the project directory, you can run:
+### In your directory, you can run this command in your Terminal:
 
-### `git clone https://github.com/Subhom1/player-contact-app.git`
+```
+git clone https://github.com/Subhom1/player-contact-app.git
+```
 
-After that install node_modules
+### After that install node_modules
 
-### `npm i`
+```
+npm i
+```
 
-Once node_modules installed
-Run the below script to start your application
+### Once node_modules installed then run the below script to start your application
 
-### `npm run start`
+```
+npm run start
+```
