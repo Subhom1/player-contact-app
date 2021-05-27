@@ -32,7 +32,7 @@ const Wrapper = styled.div`
 const UserPage = ({ userData, location, history }) => {
   const [user, setUser] = useState({});
   useEffect(() => {
-    const playerId = location?.state?.player_id;
+    // const playerId = location?.state?.player_id;
     const player = location?.state?.player_data;
     setUser(player);
   }, []);
@@ -52,16 +52,16 @@ const UserPage = ({ userData, location, history }) => {
             </div>
             <div className="col-lg-6">
               <h5>
-                First Name: <span>{user?.["First Name"]}</span>
+                First Name: <span>{user?.first_name}</span>
               </h5>
               <h5>
-                Last Name: <span>{user?.["Last Name"]}</span>
+                Last Name: <span>{user?.last_name}</span>
               </h5>
               <h5>
-                Contact Number: <span>{user?.["Contact Number"]}</span>
+                Contact Number: <span>{user?.contact_number}</span>
               </h5>
               <h5>
-                Campaign Name: <span>{user?.["Campaign Name"]}</span>
+                Campaign Name: <span>{user?.campaign_name}</span>
               </h5>
             </div>
           </div>

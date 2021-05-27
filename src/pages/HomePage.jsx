@@ -137,7 +137,11 @@ const HomePage = (props) => {
   const [userList, setUserList] = useState([]);
   const [isModal, setIsModal] = useState(false);
   const [currentUser, setCurrentUser] = useState({
-    Id: Math.floor(Math.random() * 1000).toString(),
+    id: Math.floor(Math.random() * 1000).toString(),
+    first_name: "",
+    last_name: "",
+    contact_number: "",
+    campaign_name: "",
   });
   const [editMode, setEditMode] = useState(false);
   useEffect(() => {
@@ -147,35 +151,37 @@ const HomePage = (props) => {
       setPending(false);
     }
   }, []);
+  // Session wise player filter
   const handleSelect = (e) => {
     const res = getFilteredUserListReducer(e.target.value);
     setUserList(res);
   };
+  // Toggle Modal
   const handleModal = () => {
     setIsModal(!isModal);
     setEditMode(false);
+    setCurrentUser({
+      id: Math.floor(Math.random() * 1000).toString(),
+    });
   };
+  // Add new user
   const addUser = (e) => {
     e.preventDefault();
-    if (currentUser["First Name"]) {
+    if (currentUser.first_name) {
       setUserList([...userList, currentUser]);
       setIsModal(false);
       setCurrentUser({
-        Id: Math.floor(Math.random() * 1000).toString(),
+        id: Math.floor(Math.random() * 1000).toString(),
       });
       toast.configure();
       toast.success("Player added!");
     } else return;
   };
-  // const getFilteredUserList = (session) => {
-  //   console.log(userList, "userList");
-  //   if (!session) return userList;
-  //   else return userList.filter((i) => i["Campaign Name"] === session);
-  // };
+  // Submit edited user
   const submitEdit = (e) => {
     e.preventDefault();
     const list = userList.map((i) => {
-      if (i["Id"] === currentUser["Id"]) {
+      if (i.id === currentUser.id) {
         return { ...currentUser };
       } else return i;
     });
@@ -183,27 +189,30 @@ const HomePage = (props) => {
     dispatch(EDIT_USER(list));
     setIsModal(false);
     setCurrentUser({
-      Id: Math.floor(Math.random() * 1000).toString(),
+      id: Math.floor(Math.random() * 1000).toString(),
     });
     toast.configure();
     toast.success("Player Updated!");
     setEditMode(false);
   };
+  // Trigger edit modal
   const editUser = (id) => {
     setEditMode(true);
     userList.forEach((el) => {
-      if (el["Id"] === id) {
+      if (el.id === id) {
         setIsModal(true);
         setCurrentUser(el);
       } else return;
     });
   };
+  // Delete a user
   const deleteUser = (id) => {
-    const final = userList.filter((el) => el["Id"] !== id);
+    const final = userList.filter((el) => el.id !== id);
     setUserList(final);
     toast.configure();
     toast.error("Player Deleted!");
   };
+  // session data from
   const { sessions } = props;
   let content;
   if (pending) {
@@ -213,26 +222,23 @@ const HomePage = (props) => {
       <ul className="list-player">
         {(userList || []).map((i) => {
           return (
-            <li className="list-item" key={i["Id"]}>
+            <li className="list-item" key={i.id}>
               <h6 className="player-name">
-                {i["First Name"] + " " + i["Last Name"]}
+                {i.first_name + " " + i.last_name}
               </h6>
-              <div className="player-session">{i["Campaign Name"]}</div>
+              <div className="player-session">{i.campaign_name}</div>
               <div className="player-tool-box">
-                <i
-                  className="far fa-edit"
-                  onClick={() => editUser(i["Id"])}
-                ></i>
+                <i className="far fa-edit" onClick={() => editUser(i.id)}></i>
                 <i
                   className="fas fa-trash"
-                  onClick={() => deleteUser(i["Id"])}
+                  onClick={() => deleteUser(i.id)}
                 ></i>
                 <button
                   className="view-button"
                   onClick={() =>
                     props.history.push({
-                      pathname: `/player/${i["Id"]}`,
-                      state: { player_id: i["Id"], player_data: i },
+                      pathname: `/player/${i.id}`,
+                      state: { player_id: i.id, player_data: i },
                     })
                   }
                 >
@@ -287,7 +293,7 @@ const HomePage = (props) => {
                 First Name
                 <input
                   type="text"
-                  name="First Name"
+                  name="first_name"
                   id="f_name"
                   className="player__fName"
                   onChange={(e) =>
@@ -296,14 +302,14 @@ const HomePage = (props) => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  value={currentUser["First Name"]}
+                  value={currentUser.first_name}
                 />
               </label>
               <label htmlFor="l_name">
                 Last Name
                 <input
                   type="text"
-                  name="Last Name"
+                  name="last_name"
                   id="l_name"
                   className="player__lName"
                   onChange={(e) =>
@@ -312,14 +318,14 @@ const HomePage = (props) => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  value={currentUser["Last Name"]}
+                  value={currentUser.last_name}
                 />
               </label>
               <label htmlFor="player__contact">
                 Contact Number
                 <input
                   type="number"
-                  name="Contact Number"
+                  name="contact_number"
                   id="player__contact"
                   className="player__contact"
                   onChange={(e) =>
@@ -328,11 +334,11 @@ const HomePage = (props) => {
                       [e.target.name]: e.target.value,
                     })
                   }
-                  value={currentUser["Contact Number"]}
+                  value={currentUser.contact_number}
                 />
               </label>
               <select
-                name="Campaign Name"
+                name="campaign_name"
                 className="player-filter"
                 onChange={(e) =>
                   setCurrentUser({
@@ -340,7 +346,7 @@ const HomePage = (props) => {
                     [e.target.name]: e.target.value,
                   })
                 }
-                value={currentUser["Campaign Name"]}
+                value={currentUser.campaign_name}
               >
                 <option value="">Select session</option>
                 {sessions.map((i, index) => (
