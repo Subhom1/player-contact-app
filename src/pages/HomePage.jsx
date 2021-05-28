@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { connect, useDispatch } from "react-redux";
-import { ADD_USER, EDIT_USER } from "../redux/action/userAction";
+import {
+  FETCH_USER,
+  FETCH_SESSION,
+  ADD_EDIT_USER,
+  EDIT_USER,
+} from "../redux/action/userAction";
 import { CommonLayout } from "./index";
 import styled from "styled-components";
 import { toast } from "react-toastify";
-import { getFilteredUserListReducer } from "../redux/reducer/userReducer";
+// import { getFilteredUserListReducer } from "../redux/reducer/userReducer";
 const Wrapper = styled.div`
   .custom__row {
     text-align: center;
@@ -144,18 +149,37 @@ const HomePage = (props) => {
     campaign_name: "",
   });
   const [editMode, setEditMode] = useState(false);
+
   useEffect(() => {
-    const res = getFilteredUserListReducer("");
-    if (res) {
-      setUserList(res);
+    dispatch(FETCH_USER());
+    dispatch(FETCH_SESSION());
+  }, []);
+
+  useEffect(() => {
+    if (props.userList.length) {
+      setUserList(props.userList);
       setPending(false);
     }
-  }, []);
+  }, [props.userList]);
+  // useEffect(() => {
+  //   const res = getFilteredUserListReducer("");
+  //   if (res) {
+  //     setUserList(res);
+  //     setPending(false);
+  //   }
+  // }, []);
+
   // Session wise player filter
   const handleSelect = (e) => {
-    const res = getFilteredUserListReducer(e.target.value);
-    setUserList(res);
+    if (!e.target.value) {
+      setUserList(props.userList);
+    } else {
+      setUserList(
+        props.userList.filter((i) => i.campaign_name === e.target.value)
+      );
+    }
   };
+
   // Toggle Modal
   const handleModal = () => {
     setIsModal(!isModal);
@@ -169,6 +193,7 @@ const HomePage = (props) => {
     e.preventDefault();
     if (currentUser.first_name) {
       setUserList([...userList, currentUser]);
+      dispatch(ADD_EDIT_USER(currentUser));
       setIsModal(false);
       setCurrentUser({
         id: Math.floor(Math.random() * 1000).toString(),
@@ -186,7 +211,7 @@ const HomePage = (props) => {
       } else return i;
     });
     setUserList(list);
-    dispatch(EDIT_USER(list));
+    dispatch(ADD_EDIT_USER(list));
     setIsModal(false);
     setCurrentUser({
       id: Math.floor(Math.random() * 1000).toString(),
@@ -209,6 +234,8 @@ const HomePage = (props) => {
   const deleteUser = (id) => {
     const final = userList.filter((el) => el.id !== id);
     setUserList(final);
+    dispatch(ADD_EDIT_USER(final));
+
     toast.configure();
     toast.error("Player Deleted!");
   };
@@ -262,10 +289,10 @@ const HomePage = (props) => {
             <div className="col-lg-6 rh-list">
               <div className="tool__row">
                 <select className="player-filter" onChange={handleSelect}>
-                  <option value="">Select session</option>
+                  <option value="">Select Session</option>
                   {sessions.map((i, index) => (
-                    <option key={index} value={i}>
-                      {i}
+                    <option key={index} value={i.name}>
+                      {i.name}
                     </option>
                   ))}
                 </select>
@@ -350,8 +377,8 @@ const HomePage = (props) => {
               >
                 <option value="">Select session</option>
                 {sessions.map((i, index) => (
-                  <option key={index} value={i}>
-                    {i}
+                  <option key={index} value={i.name}>
+                    {i.name}
                   </option>
                 ))}
               </select>
