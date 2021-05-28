@@ -12,7 +12,13 @@ git clone https://github.com/Subhom1/player-contact-app.git
 npm i
 ```
 
-### Once node_modules installed then run the below script to start your application
+### Start json-server for api
+
+```
+npx json-server --watch db.json
+```
+
+### Once json server has started then run the below script to start your application
 
 ```
 npm run start

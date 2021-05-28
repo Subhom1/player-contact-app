@@ -108,6 +108,7 @@ const Wrapper = styled.div`
   .modal__header i {
     font-size: 25px;
     cursor: pointer;
+    color: #f00;
   }
   .player-tool-box i {
     cursor: pointer;
