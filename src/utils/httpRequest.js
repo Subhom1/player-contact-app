@@ -1,10 +1,9 @@
-import { store } from "../redux/store";
 const BASE_URL = "http://localhost:3000";
 export const httpRequest = (type, endpoint, data) => {
   let option;
   if (type === "POST" || type === "PUT" || type === "PATCH") {
     option = {
-      method: type, // or 'PUT'
+      method: type,
       headers: {
         "Content-Type": "application/json",
       },

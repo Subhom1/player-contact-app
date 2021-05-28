@@ -3,8 +3,9 @@ import { connect, useDispatch } from "react-redux";
 import {
   FETCH_USER,
   FETCH_SESSION,
-  ADD_EDIT_USER,
-  EDIT_USER,
+  ADD_USER,
+  UPDATE_USER,
+  DELETE_USER,
 } from "../redux/action/userAction";
 import { CommonLayout } from "./index";
 import styled from "styled-components";
@@ -193,16 +194,18 @@ const HomePage = (props) => {
     e.preventDefault();
     if (currentUser.first_name) {
       setUserList([...userList, currentUser]);
-      dispatch(ADD_EDIT_USER(currentUser));
-      setIsModal(false);
-      setCurrentUser({
-        id: Math.floor(Math.random() * 1000).toString(),
+      dispatch(ADD_USER(currentUser)).then(() => {
+        setIsModal(false);
+        setCurrentUser({
+          id: Math.floor(Math.random() * 1000).toString(),
+        });
+        toast.configure();
+        toast.success("Player added!");
+        dispatch(FETCH_USER());
       });
-      toast.configure();
-      toast.success("Player added!");
     } else return;
   };
-  // Submit edited user
+  // // Submit edited user
   const submitEdit = (e) => {
     e.preventDefault();
     const list = userList.map((i) => {
@@ -211,16 +214,18 @@ const HomePage = (props) => {
       } else return i;
     });
     setUserList(list);
-    dispatch(ADD_EDIT_USER(list));
-    setIsModal(false);
-    setCurrentUser({
-      id: Math.floor(Math.random() * 1000).toString(),
+    dispatch(UPDATE_USER(currentUser)).then(() => {
+      setIsModal(false);
+      setCurrentUser({
+        id: Math.floor(Math.random() * 1000).toString(),
+      });
+      toast.configure();
+      toast.success("Player Updated!");
+      setEditMode(false);
+      dispatch(FETCH_USER());
     });
-    toast.configure();
-    toast.success("Player Updated!");
-    setEditMode(false);
   };
-  // Trigger edit modal
+  // // Trigger edit modal
   const editUser = (id) => {
     setEditMode(true);
     userList.forEach((el) => {
@@ -234,10 +239,10 @@ const HomePage = (props) => {
   const deleteUser = (id) => {
     const final = userList.filter((el) => el.id !== id);
     setUserList(final);
-    dispatch(ADD_EDIT_USER(final));
-
-    toast.configure();
-    toast.error("Player Deleted!");
+    dispatch(DELETE_USER(id)).then(() => {
+      toast.configure();
+      toast.error("Player Deleted!");
+    });
   };
   // session data from
   const { sessions } = props;
