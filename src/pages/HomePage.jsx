@@ -112,9 +112,11 @@ const Wrapper = styled.div`
   .player-tool-box i {
     cursor: pointer;
   }
-  form.player__form input[type="text"] {
+  form.player__form input[type="text"],
+  form.player__form input[type="number"] {
     width: 60%;
     float: right;
+    border: 1px solid #b9b925;
   }
   form.player__form select {
     margin: 15px 0;
